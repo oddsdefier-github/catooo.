@@ -1,0 +1,16 @@
+{
+	"name": "catoooo",
+	"version": "1.0.0",
+	"description": "",
+	"main": "index.js",
+	"scripts": {
+		"test": "echo \"Error: no test specified\" && exit 1",
+		"dev": "tailwindcss -i ./src/input.css -o ./assets/css/style.css --watch"
+	},
+	"author": "Jeffry James Paner",
+	"license": "MIT",
+	"devDependencies": {
+		"tailwindcss": "^3.3.3",
+		"tailwindcss-font-inter": "^3.0.1"
+	}
+}
