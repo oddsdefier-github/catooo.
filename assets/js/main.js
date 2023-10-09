@@ -2,12 +2,14 @@ const API_KEY = 'live_VYWieMaZM9uyeWnhAESDEKF6KvxyVtOYstsBmZxeJZv4MQO2n0Ea2Wdy0a
 const BASE_URL = 'https://api.thecatapi.com/v1';
 
 
-function fetchCatImage() {
-    $('.cat-img-container').hide();
-    $('.loading').show();
+let catImages = [];
+let currentImageIndex = 0;
 
-    $('.cat-img').attr('src', '../img/placeholder.png');
-    fetch(`${BASE_URL}/images/search`, {
+function fetchCatImages() {
+    $('.loading').show();
+    $('.cat-img-container').hide();
+
+    fetch(`${BASE_URL}/images/search?limit=100`, {
         headers: {
             'x-api-key': API_KEY
         }
@@ -19,11 +21,8 @@ function fetchCatImage() {
             return response.json();
         })
         .then(data => {
-            const url = data[0].url;
-
-            localStorage.setItem('catImageUrl', url);
-            $('.cat-img').attr('src', url);
-
+            catImages = data.map(img => img.url);
+            showNextCatImage();
             $('.loading').hide();
             $('.cat-img-container').show();
         })
@@ -33,20 +32,29 @@ function fetchCatImage() {
         });
 }
 
+function showNextCatImage() {
+    if (currentImageIndex >= catImages.length) {
+        currentImageIndex = 0;
+        fetchCatImages(); 
+        return;
+    }
+    const url = catImages[currentImageIndex];
+    localStorage.setItem('catImageUrl', url);
+    $('.cat-img').attr('src', url);
+    currentImageIndex++;
+}
+
 const storedUrl = localStorage.getItem('catImageUrl');
 if (storedUrl) {
     $('.cat-img').attr('src', storedUrl);
-} else {
-    fetchCatImage;
 }
-
 setTimeout(() => {
     $('.welcome-container').hide();
-    setTimeout(() => {
-        fetchCatImage()
-    }, 100)
+    $('#fetch-cat').show();
+    fetchCatImages()
 }, 2000)
+
 $('#fetch-cat').on("click", () => {
     localStorage.clear();
-    fetchCatImage();
-})
+    showNextCatImage();
+});
